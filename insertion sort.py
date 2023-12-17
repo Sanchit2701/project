@@ -1,13 +1,14 @@
-L=[60,50,40,30,20,10]
+# Calculate Returns
+Returns = RawStockDataPivot.copy()
+Returns[StockTickers] = Returns[StockTickers] / Returns[StockTickers].shift(12) - 1
+Returns = Returns.dropna()
 
-for j in range(1,len(L)):
+# Calculate Expected Returns
+ExpectedReturns = Returns.mean()
 
-    key=L[j]
-    i=j-1
-    while (i>=0) and L[i]>key:
-        L[i+1]=L[i]
-        i=i-1
-    L[i+1]=key
-    
-print(L)
-        
+# Calculate Excess Returns
+ExcessReturns = Returns - ExpectedReturns
+
+# Calculate Variance-Covariance Matrix
+numPeriods = len(ExcessReturns)
+VarCov = ExcessReturns.T.dot(ExcessReturns) / (numPeriods - 1)
